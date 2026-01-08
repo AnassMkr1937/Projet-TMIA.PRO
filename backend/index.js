@@ -152,3 +152,6 @@ if (fs.existsSync(FRONT_DIST)) {
 }
 
 app.listen(PORT, () => console.log(`🚀 Serveur (Mode Démo) prêt sur http://localhost:${PORT}`));
+
+
+
