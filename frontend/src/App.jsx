@@ -575,23 +575,102 @@ const App = () => {
                 </main>
             )}
 
-            {/* RESULT */}
+           {/* RESULT */}
             {route === 'result' && result && (
-                <main style={{ maxWidth: 1000, margin: '0 auto' }}>
-                    <PDFReportPreview
-                        result={result}
-                        lang={lang}
-                        translations={translations}
-                    />
+                <main style={{ maxWidth: 1000, margin: '0 auto', paddingBottom: 60 }}>
+                    
+                    {/* ============================================ */}
+                    {/* 1. SECTION B2B (Mise en avant PRO)           */}
+                    {/* ============================================ */}
+                    <div style={{
+                        background: '#fff',
+                        borderRadius: theme.borderRadius,
+                        padding: '40px',
+                        marginBottom: 40,
+                        boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+                        textAlign: 'center',
+                        border: `2px solid ${theme.primary}`
+                    }}>
+                        <h2 style={{ fontSize: 32, marginBottom: 12, color: '#111827' }}>
+                            ✅ Votre profil : <span style={{ color: theme.primary, fontWeight: 'bold' }}>{t(lang, `personas.${result.persona}`)}</span>
+                        </h2>
+                        <p style={{ fontSize: 16, color: '#6b7280', marginBottom: 20 }}>
+                            Profil identifié avec {result.confidence}% de confiance
+                        </p>
+                        
+                        <div style={{ background: '#f3f4f6', padding: '20px', borderRadius: '12px', margin: '0 auto 30px', maxWidth: '600px' }}>
+                            <p style={{ fontSize: 18, color: '#111827', margin: 0, fontWeight: '600' }}>
+                                🚀 Étape 2 : Validation Professionnelle
+                            </p>
+                            <p style={{ fontSize: 14, color: '#4b5563', margin: '8px 0 0 0' }}>
+                                Répondez au questionnaire stratégique spécialement conçu pour les profils <strong>{result.persona}</strong>.
+                            </p>
+                        </div>
 
-                    <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', gap: 12 }}>
+                        {/* Lien Dynamique Sécurisé */}
+                        {(() => {
+                            const questionnaire_links = {
+                                'visionnaire': 'https://forms.gle/ah3dygydBorpeprJ9',
+                                'prudent': 'https://forms.gle/UjngH24HhZTTu3WJ9',
+                                'creatif': 'https://forms.gle/nbrepDdHLggNTkqW8',
+                                'pragmatique': 'https://forms.gle/NSWisnXx8QR1Uq8JA',
+                                'traditionnel': 'https://forms.gle/1GMfz5jD71MfDxGMA'
+                            };
+                            
+                            // Petite sécurité : on met en minuscule pour être sûr que ça matche
+                            const safePersona = (result.persona || 'visionnaire').toLowerCase();
+                            const link = questionnaire_links[safePersona] || questionnaire_links['visionnaire'];
+
+                            return (
+                                <a
+                                    href={link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                        display: 'inline-block',
+                                        padding: '18px 40px',
+                                        background: theme.gradient,
+                                        color: '#fff',
+                                        textDecoration: 'none',
+                                        borderRadius: 50,
+                                        fontSize: 18,
+                                        fontWeight: 'bold',
+                                        cursor: 'pointer',
+                                        boxShadow: '0 10px 25px rgba(99,102,241,0.3)',
+                                        transition: 'transform 0.2s',
+                                        marginBottom: 10
+                                    }}
+                                    onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+                                    onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                                >
+                                    Accéder à mon espace dédié →
+                                </a>
+                            );
+                        })()}
+                        
+                        <p style={{ fontSize: 12, color: '#9ca3af', marginTop: 15 }}>
+                            ⏱️ Temps estimé : 2 minutes
+                        </p>
+                    </div>
+
+                    {/* ============================================ */}
+                    {/* 2. RAPPORT PDF & BOUTONS                     */}
+                    {/* ============================================ */}
+                    <div style={{ opacity: 0.9 }}>
+                        <PDFReportPreview
+                            result={result}
+                            lang={lang}
+                            translations={translations}
+                        />
+                    </div>
+
+                    <div style={{ marginTop: 30, display: 'flex', justifyContent: 'center', gap: 12 }}>
                         <PDFReportButton
                             result={result}
                             lang={lang}
                             sessionId={sessionId}
                             translations={translations}
                         />
-
                         <button
                             onClick={() => {
                                 setRoute('home');
@@ -603,26 +682,31 @@ const App = () => {
                                 setCurrentTheme('default');
                             }}
                             style={{
-                                padding: '12px 20px',
+                                padding: '12px 24px',
                                 background: '#fff',
-                                border: '2px solid #e5e7eb',
+                                border: '1px solid #d1d5db',
                                 borderRadius: 8,
                                 cursor: 'pointer',
-                                fontWeight: 'bold'
+                                fontWeight: '600',
+                                color: '#374151'
                             }}
                         >
                             {t(lang, 'restart')}
                         </button>
                     </div>
 
-                    {/* UPGRADE 3: Radar chart (replaces Heatmap) */}
+                    {/* ============================================ */}
+                    {/* 3. RADAR CHART (Pour les curieux)            */}
+                    {/* ============================================ */}
                     {result && result.scores && (
-                        <div style={{ marginTop: 24 }}>
-                            <h3 style={{ color: route === 'home' || route === 'admin' ? '#111827' : '#fff', marginBottom: 12 }}>Profil Radar</h3>
+                        <div style={{ marginTop: 40, padding: 20, background: 'rgba(255,255,255,0.8)', borderRadius: 12 }}>
+                            <h3 style={{ color: '#111827', marginBottom: 12, textAlign: 'center', fontSize: 18 }}>
+                                Analyse Radar Détaillée
+                            </h3>
                             <ProRadarChart
                                 scores={result.scores}
                                 max={5}
-                                color="#8884d8"
+                                color={theme.primary}
                                 height={360}
                             />
                         </div>
